@@ -7,7 +7,6 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
 @Component
 public class MyWeatherBot extends TelegramLongPollingBot {
 
@@ -32,6 +31,7 @@ public class MyWeatherBot extends TelegramLongPollingBot {
             String message_text = update.getMessage().getText().toLowerCase();
             long chat_id = update.getMessage().getChatId();
             String sendersName = update.getMessage().getFrom().getUserName();
+            // TODO If the message contains the keyword weather and a valid city
             if(message_text.trim().contains("weather")) {
 
                 SendMessage message = new SendMessage();
