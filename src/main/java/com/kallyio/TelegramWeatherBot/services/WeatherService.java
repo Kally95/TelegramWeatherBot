@@ -32,8 +32,6 @@ public class WeatherService {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 return new WeatherResponse(response.body(),200);
-            } else {
-                return new WeatherResponse("No response found", 500);
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -51,6 +49,6 @@ public class WeatherService {
             return String.format("Hi %s, in %s the weather is currently %.2f degrees with %s and feels like %.2f degrees from a humans perspective",
                     sendersName, weatherLoc, temp, weatherDesc, tempFeels);
         }
-         return "Error occurred while fetching the weather. Please try after sometime.";
+         return "Error occurred while fetching the weather. If this persists, please contact Kally-95@hotmail.com";
     }
 }
