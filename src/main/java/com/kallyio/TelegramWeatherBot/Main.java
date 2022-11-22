@@ -23,7 +23,7 @@ public class Main {
 
 	@PostConstruct
 	public void startUp() {
-		TelegramBotsApi telegramBotsApi = null;
+		TelegramBotsApi telegramBotsApi;
 		try {
 			telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
 		} catch (TelegramApiException e) {
