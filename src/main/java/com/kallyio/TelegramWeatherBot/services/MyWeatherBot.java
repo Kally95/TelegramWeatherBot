@@ -1,12 +1,17 @@
 package com.kallyio.TelegramWeatherBot.services;
 
+import com.google.maps.errors.ApiException;
+import com.kallyio.TelegramWeatherBot.entities.Location;
 import com.kallyio.TelegramWeatherBot.entities.WeatherResponse;
+import com.kallyio.TelegramWeatherBot.http.GeocoderImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.io.IOException;
 
 @Component
 public class MyWeatherBot extends TelegramLongPollingBot {
@@ -31,14 +36,33 @@ public class MyWeatherBot extends TelegramLongPollingBot {
 
             String message_text = update.getMessage().getText().toLowerCase();
             long chat_id = update.getMessage().getChatId();
+
+            SendMessage message = new SendMessage();
+            message.setChatId(chat_id);
+
             String sendersName = update.getMessage().getFrom().getUserName();
-            if(message_text.trim().contains("weather")) {
 
-                SendMessage message = new SendMessage();
+            String[] values = message_text.split(" ");
+            String keyword = values[0].trim();
+            String locationWord = values[1].trim();
 
-                message.setChatId(chat_id);
+            Location latLng;
 
-                WeatherResponse response = weatherService.getWeather();
+            if(
+                    keyword.equals("weather") &&
+                    locationWord.matches("([a-zA-Z]+|[a-zA-Z]+\\s[a-zA-Z]+)")
+            ){
+                try {
+                    latLng = GeocoderImp.getLocationCoordinates(locationWord);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } catch (ApiException e) {
+                    throw new RuntimeException(e);
+                }
+
+                WeatherResponse response = weatherService.getWeather(latLng);
 
                 message.setText(weatherService.generateWeatherReport(response, sendersName));
 
@@ -46,6 +70,14 @@ public class MyWeatherBot extends TelegramLongPollingBot {
                     execute(message);
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
+                }
+            } else {
+                message.setText("Sorry, I didn't quite get that. Please use the following format 'weather <city>'." +
+                        " As an example, type 'weather London'");
+                try {
+                    execute(message);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
                 }
             }
         }
