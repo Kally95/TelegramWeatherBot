@@ -43,41 +43,58 @@ public class MyWeatherBot extends TelegramLongPollingBot {
             String sendersName = update.getMessage().getFrom().getUserName();
 
             String[] values = message_text.split(" ");
-            String keyword = values[0].trim();
-            String locationWord = values[1].trim();
 
-            Location latLng;
+            String keyword = null;
+            String locationWord = null;
 
-            if(
-                    keyword.equals("weather") &&
-                    locationWord.matches("([a-zA-Z]+|[a-zA-Z]+\\s[a-zA-Z]+)")
-            ){
-                try {
-                    latLng = GeocoderImp.getLocationCoordinates(locationWord);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                } catch (ApiException e) {
-                    throw new RuntimeException(e);
-                }
-
-                WeatherResponse response = weatherService.getWeather(latLng);
-
-                message.setText(weatherService.generateWeatherReport(response, sendersName));
-
-                try {
-                    execute(message);
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                message.setText("Sorry, I didn't quite get that. Please use the following format 'weather <city>'." +
+            if(values.length < 2) {
+                 message.setText("Sorry, I didn't quite get that. Please use the following format 'weather <city>'." +
                         " As an example, type 'weather London'");
                 try {
                     execute(message);
                 } catch (TelegramApiException e) {
                     throw new RuntimeException(e);
+                }
+            } else {
+                keyword = values[0].trim();
+                locationWord = values[1].trim();
+
+
+                Location latLng;
+
+                if (values.length == 2 &&
+                        locationWord != null &&
+                        keyword != null &&
+                        keyword.equals("weather") &&
+                        locationWord.matches("([a-zA-Z]+|[a-zA-Z]+\\s[a-zA-Z]+)")
+                ) {
+                    try {
+                        latLng = GeocoderImp.getLocationCoordinates(locationWord);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    } catch (ApiException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    WeatherResponse response = weatherService.getWeather(latLng);
+
+                    message.setText(weatherService.generateWeatherReport(response, sendersName));
+
+                    try {
+                        execute(message);
+                    } catch (TelegramApiException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    message.setText("Sorry, I didn't quite get that. Please use the following format 'weather <city>'." +
+                            " As an example, type 'weather London'");
+                    try {
+                        execute(message);
+                    } catch (TelegramApiException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }
