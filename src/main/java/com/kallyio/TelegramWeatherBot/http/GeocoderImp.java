@@ -14,15 +14,19 @@ import java.io.IOException;
 
 @Component
 public class GeocoderImp {
+    //throws IOException, InterruptedException, ApiException. You later catch all of those. Also @SneakyThrows
+    //this is spring Component, why this method is static?
     public static Location getLocationCoordinates(String address) throws IOException, InterruptedException, ApiException {
         //TODO - Decouple API call functionality, move to another class/package.
         GeoApiContext context = new GeoApiContext.Builder()
+                //if this is method is not static you can inject config and get it from there
                 .apiKey(System.getenv("GOOGLE_API_KEY"))
                 .build();
         try {
             GeocodingResult[] results = GeocodingApi.geocode(context,
                     address).await();
 
+            //You have this JsonMapper util. Maybe you can get OM from there?
             ObjectMapper mapper = new ObjectMapper();
 
             String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(results[0]);

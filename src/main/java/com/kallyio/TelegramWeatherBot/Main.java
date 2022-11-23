@@ -1,5 +1,6 @@
 package com.kallyio.TelegramWeatherBot;
 
+//clean unused imports. If you use IntelliJ ctrl + alt + K will clean your code
 import com.google.maps.errors.ApiException;
 import com.kallyio.TelegramWeatherBot.http.GeocoderImp;
 import com.kallyio.TelegramWeatherBot.services.MyWeatherBot;
@@ -17,6 +18,8 @@ import java.io.IOException;
 @AutoConfiguration
 public class Main {
 
+	//avoid field injection if it's not necessary
+	//https://eng.zemosolabs.com/when-not-to-autowire-in-spring-spring-boot-93e6a01cb793
 	@Autowired
 	MyWeatherBot myWeatherBot;
 
@@ -24,6 +27,8 @@ public class Main {
 		SpringApplication.run(Main.class, args);
 	}
 
+	//this doesn't fit here and will probably break if you use constructor injection instead of Autowired
+	//you should move this to some new class
 	@PostConstruct
 	public void startUp() {
 		TelegramBotsApi telegramBotsApi;

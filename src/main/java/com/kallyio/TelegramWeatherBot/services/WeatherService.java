@@ -17,12 +17,20 @@ import java.net.http.HttpResponse;
 
 @Component
 public class WeatherService {
+    //Field injection bad.
     @Autowired
     private WeatherConfig weatherConfig;
+    //why not move this uri somewhere else? Renamed whetherConfig? properties file?
     private static final String URI_RESOURCE = "https://api.openweathermap.org/data/2.5/weather?";
 
+    //latLng is terrible name :) location, coordinates, ...
     public WeatherResponse getWeather(Location latLng) {
         //TODO - Decouple API call functionality, move to another class/package.
+
+        //You have spring in the project you should probably switch to restTemplate
+        //https://www.baeldung.com/rest-template
+        //Even if you don't switch to restTemplate, I guess this is what you meant in to do,
+        //yes you should wrap request sending logic in some method in different class.
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest

@@ -12,6 +12,7 @@
 	<artifactId>TelegramWeatherBot</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>TelegramWeatherBot</name>
+<!--change or remove description-->
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
@@ -22,6 +23,11 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+<!-- you should think about grouping your dependencies.
+You can add comments if you like to make some logic groups for them.
+Important stuff goes first.
+Stuff like test dependencies or Lombok which is just utility can go to the bottom.
+(The way you order them depends on you, I just gave example, because I've noticed it's a little messy here)-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>

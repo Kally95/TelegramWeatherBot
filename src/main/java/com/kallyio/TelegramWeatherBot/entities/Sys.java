@@ -5,6 +5,7 @@ import lombok.ToString;
 
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
+//Terrible class name
 public class Sys{
     public String country;
 }
