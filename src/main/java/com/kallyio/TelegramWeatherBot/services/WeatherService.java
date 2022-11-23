@@ -1,5 +1,7 @@
 package com.kallyio.TelegramWeatherBot.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.kallyio.TelegramWeatherBot.entities.Location;
 import com.kallyio.TelegramWeatherBot.entities.WeatherReport;
 import com.kallyio.TelegramWeatherBot.entities.WeatherResponse;
 import com.kallyio.TelegramWeatherBot.util.JsonMapper;
@@ -19,15 +21,15 @@ public class WeatherService {
     private WeatherConfig weatherConfig;
     private static final String URI_RESOURCE = "https://api.openweathermap.org/data/2.5/weather?";
 
-    public WeatherResponse getWeather() {
-
+    public WeatherResponse getWeather(Location latLng) {
+        //TODO - Decouple API call functionality, move to another class/package.
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest
                 .newBuilder()
                 .uri(URI.create(URI_RESOURCE
-                                + "lat="+weatherConfig.getLat()
-                                +"&lon="+weatherConfig.getLon()
+                                + "lat="+latLng.lat
+                                +"&lon="+latLng.lng
                                 +"&appid="+weatherConfig.getAPIKey()
                                 +"&units=metric"
                         )).build();
@@ -44,14 +46,19 @@ public class WeatherService {
 
     public String generateWeatherReport(WeatherResponse resp, String sendersName) {
         if(resp.getStatus() == HttpStatus.SC_OK){
-            WeatherReport entity = JsonMapper.jsonToMap(resp.getBody());
-                String weatherDesc = entity.getWeather().get(0).description;
-                String weatherLoc = entity.getName();
-                double temp = entity.getTemp().temp;
-                double tempFeels = entity.getTemp().feels_like;
-                return String.format("Hi %s, in %s the weather is currently %.2f degrees with %s and feels like %.2f degrees from a humans perspective",
-                        sendersName, weatherLoc, temp, weatherDesc, tempFeels);
+            WeatherReport entity;
+            try {
+                entity = JsonMapper.jsonToMapLocation(resp.getBody(), WeatherReport.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
             }
-        return "Error occurred while fetching the weather. If this persists, please contact Kally-95@hotmail.com";
+            String weatherDesc = entity.getWeather().get(0).description;
+            String weatherLoc = entity.getName();
+            double temp = entity.getTemp().temp;
+            double tempFeels = entity.getTemp().feels_like;
+            return String.format("Hi %s, in %s the weather is currently %.2f degrees with %s and feels like %.2f degrees from a humans perspective",
+                    sendersName, weatherLoc, temp, weatherDesc, tempFeels);
+            }
+        return "Error occurred whilst fetching the weather. If this persists, please contact Kally-95@hotmail.com";
     }
 }

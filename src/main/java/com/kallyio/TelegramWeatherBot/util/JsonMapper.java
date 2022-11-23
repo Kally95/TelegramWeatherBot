@@ -1,16 +1,24 @@
 package com.kallyio.TelegramWeatherBot.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kallyio.TelegramWeatherBot.entities.GeoCoordinates;
 import com.kallyio.TelegramWeatherBot.entities.WeatherReport;
 
 import java.io.IOException;
 
 public class JsonMapper {
-    public static WeatherReport jsonToMap(String json) {
-        ObjectMapper mapper = new ObjectMapper();
+
+    private static ObjectMapper objectMapper = defaultObjectMapper();
+
+    private static ObjectMapper defaultObjectMapper() {
+        return new ObjectMapper();
+    }
+
+    public static <T> T jsonToMapLocation(String json, Class<T> c) throws JsonProcessingException {
         try {
-            WeatherReport map = mapper.readValue(json, WeatherReport.class);
-            return map;
+            Object obj = objectMapper.readValue(json, c);
+            return c.cast(obj);
         } catch (IOException e) {
             e.printStackTrace();
         }
