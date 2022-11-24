@@ -7,6 +7,7 @@ import com.kallyio.TelegramWeatherBot.entities.WeatherResponse;
 import com.kallyio.TelegramWeatherBot.http.WeatherClient;
 import com.kallyio.TelegramWeatherBot.util.JsonMapper;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.apache.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 public class WeatherService {
     private WeatherClient weatherClient;
 
+    @SneakyThrows
     public WeatherResponse getWeather(Location latLng) {
         return weatherClient.weatherAPIConsumer(latLng);
     }

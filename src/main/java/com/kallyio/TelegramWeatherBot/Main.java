@@ -1,8 +1,6 @@
 package com.kallyio.TelegramWeatherBot;
 
 //clean unused imports. If you use IntelliJ ctrl + alt + K will clean your code
-import com.google.maps.errors.ApiException;
-import com.kallyio.TelegramWeatherBot.http.GeocoderImp;
 import com.kallyio.TelegramWeatherBot.services.MyWeatherBot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -12,7 +10,6 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 
 @SpringBootApplication
 @AutoConfiguration

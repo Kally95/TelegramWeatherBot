@@ -4,7 +4,6 @@ import com.kallyio.TelegramWeatherBot.config.StoredKeys;
 import com.kallyio.TelegramWeatherBot.util.Constants;
 import com.kallyio.TelegramWeatherBot.entities.Location;
 import com.kallyio.TelegramWeatherBot.entities.WeatherResponse;
-import com.kallyio.TelegramWeatherBot.http.GeocoderImp;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
@@ -16,7 +15,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Component
 public class MyWeatherBot extends TelegramLongPollingBot {
     private WeatherService weatherService;
-    private GeocoderImp geocoderImp;
+    private GeocoderService geocoderService;
     private StoredKeys storedKeys;
 
     @Override
@@ -38,7 +37,7 @@ public class MyWeatherBot extends TelegramLongPollingBot {
             String[] values = update.getMessage().getText().toLowerCase().split(" ");
             if(values.length == Constants.EXPECTED_ARRAY_SIZE) {
                 if (values[0].trim().equals(Constants.WEATHER) && values[1].trim().matches(Constants.WEATHER_NAME_REGEX)) {
-                    Location coordinates = geocoderImp.getLocationCoordinates(values[1].trim());
+                    Location coordinates = geocoderService.getLocationCoordinates(values[1].trim());
                     if(coordinates != null) {
                         WeatherResponse response = weatherService.getWeather(coordinates);
                         message.setText(weatherService.generateWeatherReport(response, update.getMessage().getFrom().getUserName()));
