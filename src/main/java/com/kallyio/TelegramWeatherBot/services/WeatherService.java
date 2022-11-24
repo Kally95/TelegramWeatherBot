@@ -4,44 +4,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kallyio.TelegramWeatherBot.entities.Location;
 import com.kallyio.TelegramWeatherBot.entities.WeatherReport;
 import com.kallyio.TelegramWeatherBot.entities.WeatherResponse;
+import com.kallyio.TelegramWeatherBot.http.WeatherClient;
 import com.kallyio.TelegramWeatherBot.util.JsonMapper;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-
 @Component
 public class WeatherService {
     @Autowired
     private WeatherConfig weatherConfig;
-    private static final String URI_RESOURCE = "https://api.openweathermap.org/data/2.5/weather?";
+    @Autowired
+    private WeatherClient weatherClient;
 
     public WeatherResponse getWeather(Location latLng) {
-        //TODO - Decouple API call functionality, move to another class/package.
-        HttpClient client = HttpClient.newHttpClient();
-
-        HttpRequest request = HttpRequest
-                .newBuilder()
-                .uri(URI.create(URI_RESOURCE
-                                + "lat="+latLng.getLat()
-                                +"&lon="+latLng.getLng()
-                                +"&appid="+weatherConfig.getAPIKey()
-                                +"&units=metric"
-                        )).build();
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == HttpStatus.SC_OK) {
-                return new WeatherResponse(response.body(),HttpStatus.SC_OK);
-            }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        return new WeatherResponse("No response found", HttpStatus.SC_OK);
+        return weatherClient.weatherAPIConsumer(latLng);
     }
 
     public String generateWeatherReport(WeatherResponse resp, String sendersName) {
