@@ -8,16 +8,15 @@ import java.util.ArrayList;
 
 
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
-@Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherReport {
-    public ArrayList<Weather> weather;
+    private ArrayList<Weather> weather;
     @JsonProperty("main")
-    public Temp temp;
-    public Sys sys;
-    public int id;
-    public String name;
+    private Temp temp;
+    private Sys sys;
+    private int id;
+    private String name;
 }
