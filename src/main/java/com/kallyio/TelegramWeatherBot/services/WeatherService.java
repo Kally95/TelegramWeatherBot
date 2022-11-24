@@ -7,7 +7,9 @@ import com.kallyio.TelegramWeatherBot.entities.WeatherResponse;
 import com.kallyio.TelegramWeatherBot.util.JsonMapper;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.URI;
@@ -22,25 +24,16 @@ public class WeatherService {
     private static final String URI_RESOURCE = "https://api.openweathermap.org/data/2.5/weather?";
 
     public WeatherResponse getWeather(Location latLng) {
-        //TODO - Decouple API call functionality, move to another class/package.
-        HttpClient client = HttpClient.newHttpClient();
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.getForEntity(URI_RESOURCE
+                +"lat="+latLng.getLat()
+                +"&lon="+latLng.getLng()
+                +"&appid="+weatherConfig.getAPIKey()
+                +"&units=metric", String.class);
 
-        HttpRequest request = HttpRequest
-                .newBuilder()
-                .uri(URI.create(URI_RESOURCE
-                                + "lat="+latLng.getLat()
-                                +"&lon="+latLng.getLng()
-                                +"&appid="+weatherConfig.getAPIKey()
-                                +"&units=metric"
-                        )).build();
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == HttpStatus.SC_OK) {
-                return new WeatherResponse(response.body(),HttpStatus.SC_OK);
+            if (response.getStatusCodeValue() == HttpStatus.SC_OK) {
+                return new WeatherResponse(response.getBody(), HttpStatus.SC_OK);
             }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
         return new WeatherResponse("No response found", HttpStatus.SC_OK);
     }
 
