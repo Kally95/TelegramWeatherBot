@@ -7,6 +7,6 @@ import lombok.ToString;
 @ToString
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Weather{
+public class Weather {
     private String description;
 }

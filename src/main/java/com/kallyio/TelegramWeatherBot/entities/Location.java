@@ -1,6 +1,7 @@
 package com.kallyio.TelegramWeatherBot.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @ToString
@@ -10,6 +11,13 @@ import lombok.*;
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Location {
-    private double lat;
-    private double lng;
+    @JsonProperty("lat")
+    private double latitude;
+    @JsonProperty("lng")
+    private double longitude;
+
+    public Location(Location location) {
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+    }
 }

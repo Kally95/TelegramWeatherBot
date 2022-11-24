@@ -2,24 +2,24 @@ package com.kallyio.TelegramWeatherBot.http;
 
 import com.kallyio.TelegramWeatherBot.entities.Location;
 import com.kallyio.TelegramWeatherBot.entities.WeatherResponse;
-import com.kallyio.TelegramWeatherBot.services.WeatherConfig;
+import com.kallyio.TelegramWeatherBot.config.StoredKeys;
 import lombok.AllArgsConstructor;
 import org.apache.http.HttpStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import static com.kallyio.TelegramWeatherBot.util.Constants.OPEN_WEATHER_MAP_URL;
+
 @Component
 @AllArgsConstructor
 public class WeatherClient {
-    private WeatherConfig weatherConfig;
-    private static final String URI_RESOURCE = "https://api.openweathermap.org/data/2.5/weather?";
-    public WeatherResponse weatherAPIConsumer(Location latLng) {
+    private StoredKeys StoredKeys;
+    public WeatherResponse weatherAPIConsumer(Location coordinates) {
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.getForEntity(URI_RESOURCE
-                +"lat="+latLng.getLat()
-                +"&lon="+latLng.getLng()
-                +"&appid="+weatherConfig.getAPIKey()
+        ResponseEntity<String> response = restTemplate.getForEntity(OPEN_WEATHER_MAP_URL
+                +"lat="+coordinates.getLatitude()
+                +"&lon="+coordinates.getLongitude()
+                +"&appid="+ StoredKeys.getWeatherApiKey()
                 +"&units=metric", String.class);
 
         if (response.getStatusCodeValue() == HttpStatus.SC_OK) {

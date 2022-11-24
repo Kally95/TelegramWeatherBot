@@ -1,53 +1,40 @@
 package com.kallyio.TelegramWeatherBot.http;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
-import com.google.maps.errors.ApiException;
 import com.google.maps.model.GeocodingResult;
+import com.kallyio.TelegramWeatherBot.config.StoredKeys;
 import com.kallyio.TelegramWeatherBot.entities.GeoCoordinates;
 import com.kallyio.TelegramWeatherBot.entities.Location;
 import com.kallyio.TelegramWeatherBot.util.JsonMapper;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-
+@AllArgsConstructor
 @Component
 public class GeocoderImp {
-    public static Location getLocationCoordinates(String address) throws IOException, InterruptedException, ApiException {
-    public static Location getLocationCoordinates(String address)
-            throws IOException, InterruptedException, ApiException
-    {
-        //TODO - Decouple API call functionality, move to another class/package.
-        GeoApiContext context = new GeoApiContext.Builder()
-                //if this is method is not static you can inject config and get it from there
-                .apiKey(System.getenv("GOOGLE_API_KEY"))
-                .build();
-        try {
-            GeocodingResult[] results = GeocodingApi.geocode(context,
-                    address).await();
+    private StoredKeys storedKeys;
 
-            //You have this JsonMapper util. Maybe you can get OM from there?
-            ObjectMapper mapper = new ObjectMapper();
-
-            String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(results[0]);
-            GeoCoordinates coords = JsonMapper.jsonToPojoMapper(json, GeoCoordinates.class);
-
-            Location location = new Location();
-            location.setLat(coords.getGeometry().getLocation().getLat());
-            location.setLng(coords.getGeometry().getLocation().getLng());
-
-            return location;
-        } catch (IOException e) {
-            throw e;
-        } catch (InterruptedException i){
-            throw i;
-        } catch (ApiException a) {
-            throw a;
-        } finally {
-            context.shutdown();
+    public Location getLocationCoordinates(String address) {
+        {
+            GeoApiContext context = new GeoApiContext.Builder()
+                    .apiKey(storedKeys.getGoogleApiKey())
+                    .build();
+            try {
+                GeocodingResult[] results = GeocodingApi.geocode(context,
+                        address).await();
+                if(results.length > 0) {
+                    String json = JsonMapper.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(results[0]);
+                    GeoCoordinates coords = JsonMapper.jsonToPojoMapper(json, GeoCoordinates.class);
+                    return new Location(coords.getGeometry().getLocation());
+                }
+            } catch (Exception e) {
+               e.printStackTrace();
+            } finally {
+                context.shutdown();
+            }
         }
+        return null;
     }
-
 }
 

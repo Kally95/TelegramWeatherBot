@@ -6,15 +6,13 @@ import com.kallyio.TelegramWeatherBot.entities.WeatherReport;
 import com.kallyio.TelegramWeatherBot.entities.WeatherResponse;
 import com.kallyio.TelegramWeatherBot.http.WeatherClient;
 import com.kallyio.TelegramWeatherBot.util.JsonMapper;
+import lombok.AllArgsConstructor;
 import org.apache.http.HttpStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class WeatherService {
-    @Autowired
-    private WeatherConfig weatherConfig;
-    @Autowired
     private WeatherClient weatherClient;
 
     public WeatherResponse getWeather(Location latLng) {
@@ -31,10 +29,10 @@ public class WeatherService {
             }
             String weatherDesc = weatherReport.getWeather().get(0).getDescription();
             String weatherLoc = weatherReport.getName();
-            double temp = weatherReport.getTemp().getTemp();
-            double tempFeels = weatherReport.getTemp().getFeels_like();
+            double temperature = weatherReport.getTemp().getTemp();
+            double temperatureFeels = weatherReport.getTemp().getFeels_like();
             return String.format("Hi %s, in %s the weather is currently %.2f degrees with %s and feels like %.2f degrees from a humans perspective",
-                    sendersName, weatherLoc, temp, weatherDesc, tempFeels);
+                    sendersName, weatherLoc, temperature, weatherDesc, temperatureFeels);
             }
         return "Error occurred whilst fetching the weather. If this persists, please contact Kally-95@hotmail.com";
     }
