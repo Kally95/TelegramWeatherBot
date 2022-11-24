@@ -26,11 +26,11 @@ public class GeocoderImp {
             ObjectMapper mapper = new ObjectMapper();
 
             String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(results[0]);
-            GeoCoordinates coords = JsonMapper.jsonToMapLocation(json, GeoCoordinates.class);
+            GeoCoordinates coords = JsonMapper.jsonToPojoMapper(json, GeoCoordinates.class);
 
             Location location = new Location();
-            location.lat = coords.geometry.location.lat;
-            location.lng = coords.geometry.location.lng;
+            location.setLat(coords.getGeometry().getLocation().getLat());
+            location.setLng(coords.getGeometry().getLocation().getLng());
 
             return location;
         } catch (IOException e) {

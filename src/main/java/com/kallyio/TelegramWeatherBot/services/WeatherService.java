@@ -28,8 +28,8 @@ public class WeatherService {
         HttpRequest request = HttpRequest
                 .newBuilder()
                 .uri(URI.create(URI_RESOURCE
-                                + "lat="+latLng.lat
-                                +"&lon="+latLng.lng
+                                + "lat="+latLng.getLat()
+                                +"&lon="+latLng.getLng()
                                 +"&appid="+weatherConfig.getAPIKey()
                                 +"&units=metric"
                         )).build();
@@ -46,16 +46,16 @@ public class WeatherService {
 
     public String generateWeatherReport(WeatherResponse resp, String sendersName) {
         if(resp.getStatus() == HttpStatus.SC_OK){
-            WeatherReport entity;
+            WeatherReport weatherReport;
             try {
-                entity = JsonMapper.jsonToMapLocation(resp.getBody(), WeatherReport.class);
+                weatherReport = JsonMapper.jsonToPojoMapper(resp.getBody(), WeatherReport.class);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
-            String weatherDesc = entity.getWeather().get(0).description;
-            String weatherLoc = entity.getName();
-            double temp = entity.getTemp().temp;
-            double tempFeels = entity.getTemp().feels_like;
+            String weatherDesc = weatherReport.getWeather().get(0).getDescription();
+            String weatherLoc = weatherReport.getName();
+            double temp = weatherReport.getTemp().getTemp();
+            double tempFeels = weatherReport.getTemp().getFeels_like();
             return String.format("Hi %s, in %s the weather is currently %.2f degrees with %s and feels like %.2f degrees from a humans perspective",
                     sendersName, weatherLoc, temp, weatherDesc, tempFeels);
             }
