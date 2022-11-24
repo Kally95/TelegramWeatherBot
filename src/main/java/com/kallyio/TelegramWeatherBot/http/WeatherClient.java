@@ -19,7 +19,7 @@ public class WeatherClient {
         ResponseEntity<String> response = restTemplate.getForEntity(OPEN_WEATHER_MAP_URL
                 +"lat="+coordinates.getLatitude()
                 +"&lon="+coordinates.getLongitude()
-                +"&appid="+ StoredKeys.getWeatherApiKey()
+                +"&appid="+StoredKeys.getWeatherApiKey()
                 +"&units=metric", String.class);
 
         if (response.getStatusCodeValue() == HttpStatus.SC_OK) {
