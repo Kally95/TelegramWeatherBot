@@ -14,17 +14,20 @@ import java.io.IOException;
 
 @Component
 public class GeocoderImp {
+    public static Location getLocationCoordinates(String address) throws IOException, InterruptedException, ApiException {
     public static Location getLocationCoordinates(String address)
             throws IOException, InterruptedException, ApiException
     {
         //TODO - Decouple API call functionality, move to another class/package.
         GeoApiContext context = new GeoApiContext.Builder()
+                //if this is method is not static you can inject config and get it from there
                 .apiKey(System.getenv("GOOGLE_API_KEY"))
                 .build();
         try {
             GeocodingResult[] results = GeocodingApi.geocode(context,
                     address).await();
 
+            //You have this JsonMapper util. Maybe you can get OM from there?
             ObjectMapper mapper = new ObjectMapper();
 
             String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(results[0]);
