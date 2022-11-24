@@ -11,7 +11,6 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
 import java.io.IOException;
 
 @Component
@@ -19,6 +18,8 @@ public class MyWeatherBot extends TelegramLongPollingBot {
     //Field injection bad.
     @Autowired
     private WeatherService weatherService;
+   private final static String regex = "([a-zA-Z]+|[a-zA-Z]+\\s[a-zA-Z]+)";
+   private final int expectedStringArrSize = 2;
 
     @Override
     public String getBotUsername() {
@@ -54,10 +55,10 @@ public class MyWeatherBot extends TelegramLongPollingBot {
 
             String[] values = message_text.split(" ");
 
-            String keyword = null;
-            String locationWord = null;
+            String keyword;
+            String locationWord;
 
-            if(values.length < 2) {
+            if(values.length < expectedStringArrSize) {
                  message.setText("Sorry, I didn't quite get that. Please use the following format 'weather <city>'." +
                         " As an example, type 'weather London'");
                 try {
@@ -72,18 +73,15 @@ public class MyWeatherBot extends TelegramLongPollingBot {
                 keyword = values[0].trim();
                 locationWord = values[1].trim();
 
-                //latLng is terrible name :) location, coordinates, ...
                 Location latLng;
 
-                if (values.length == 2 &&
-                        //those null checks are made too late, you would already got NPE at trim() above if any of those would be null.
-                        //also there is a trick to checking this without worring about null. You can invert the equals:
-                        //"weather".equals(keyword) <- "weather" is litteral so it can't be null, so no need to worry about npe and if the keyword is null it will just return false
+
+                if (values.length == expectedStringArrSize &&
                         locationWord != null &&
                         keyword != null &&
                         keyword.equals("weather") &&
-                        //https://www.baeldung.com/java-regex-pre-compile
-                        locationWord.matches("([a-zA-Z]+|[a-zA-Z]+\\s[a-zA-Z]+)")
+                        locationWord.matches(regex)
+
                 ) {
                     try {
                         //if you decide to use sneakyThrows, try/catch can be removed

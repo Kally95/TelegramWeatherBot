@@ -1,10 +1,12 @@
 package com.kallyio.TelegramWeatherBot.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
 import lombok.ToString;
 
 @ToString
+@Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GeoCoordinates {
-    public Geometry geometry;
+    private Geometry geometry;
 }

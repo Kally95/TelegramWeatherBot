@@ -10,7 +10,6 @@ import lombok.*;
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Location {
-    //abbreviations are bad. Also you are it's inconsistent with com.kallyio.TelegramWeatherBot.services.WeatherConfig.lon
-    public double lat;
-    public double lng;
+    private double lat;
+    private double lng;
 }
