@@ -10,7 +10,6 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
 import java.io.IOException;
 
 @Component
@@ -18,6 +17,8 @@ public class MyWeatherBot extends TelegramLongPollingBot {
 
    @Autowired
     private WeatherService weatherService;
+   private final static String regex = "([a-zA-Z]+|[a-zA-Z]+\\s[a-zA-Z]+)";
+   private final int expectedStringArrSize = 2;
 
     @Override
     public String getBotUsername() {
@@ -44,10 +45,10 @@ public class MyWeatherBot extends TelegramLongPollingBot {
 
             String[] values = message_text.split(" ");
 
-            String keyword = null;
-            String locationWord = null;
+            String keyword;
+            String locationWord;
 
-            if(values.length < 2) {
+            if(values.length < expectedStringArrSize) {
                  message.setText("Sorry, I didn't quite get that. Please use the following format 'weather <city>'." +
                         " As an example, type 'weather London'");
                 try {
@@ -62,11 +63,11 @@ public class MyWeatherBot extends TelegramLongPollingBot {
 
                 Location latLng;
 
-                if (values.length == 2 &&
+                if (values.length == expectedStringArrSize &&
                         locationWord != null &&
                         keyword != null &&
                         keyword.equals("weather") &&
-                        locationWord.matches("([a-zA-Z]+|[a-zA-Z]+\\s[a-zA-Z]+)")
+                        locationWord.matches(regex)
                 ) {
                     try {
                         latLng = GeocoderImp.getLocationCoordinates(locationWord);

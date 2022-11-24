@@ -14,7 +14,9 @@ import java.io.IOException;
 
 @Component
 public class GeocoderImp {
-    public static Location getLocationCoordinates(String address) throws IOException, InterruptedException, ApiException {
+    public static Location getLocationCoordinates(String address)
+            throws IOException, InterruptedException, ApiException
+    {
         //TODO - Decouple API call functionality, move to another class/package.
         GeoApiContext context = new GeoApiContext.Builder()
                 .apiKey(System.getenv("GOOGLE_API_KEY"))
