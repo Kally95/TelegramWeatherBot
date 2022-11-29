@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public class WeatherService {
+
     private WeatherClient weatherClient;
 
     @SneakyThrows
