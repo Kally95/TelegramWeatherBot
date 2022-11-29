@@ -8,14 +8,18 @@ import org.apache.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+
 import static com.kallyio.TelegramWeatherBot.util.Constants.OPEN_WEATHER_MAP_URL;
 
 @Component
 @AllArgsConstructor
 public class WeatherClient {
     private StoredKeys StoredKeys;
+    private RestTemplate restTemplate;
+
     public WeatherResponse weatherAPIConsumer(Location coordinates) {
-        RestTemplate restTemplate = new RestTemplate();
+
         ResponseEntity<String> response = restTemplate.getForEntity(OPEN_WEATHER_MAP_URL
                 +"lat="+coordinates.getLatitude()
                 +"&lon="+coordinates.getLongitude()
